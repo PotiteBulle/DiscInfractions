@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const JSONStream = require('JSONStream');
+const PDFDocument = require('pdfkit');
 
 // Chemin vers le dossier contenant les fichiers de mots ou phrases problématiques
 const infractionsDir = path.join(__dirname, 'infractions');
@@ -35,6 +36,50 @@ async function loadProblematicPatterns() {
     }
 }
 
+// Fonction pour créer un rapport PDF des messages problématiques
+function createPDFReport(messages, outputFilePath) {
+    return new Promise((resolve, reject) => {
+        try {
+            const doc = new PDFDocument();
+            const pdfPath = outputFilePath.replace('.json', '.pdf');
+            const writeStream = fs.createWriteStream(pdfPath);
+
+            doc.pipe(writeStream);
+
+            // Titre du rapport
+            doc.fontSize(20).text('Rapport de Violations - Discord', { align: 'center' });
+            doc.moveDown();
+
+            // Résumé
+            doc.fontSize(12).text(`Ce rapport contient ${messages.length} message(s) problématique(s) détecté(s) sur Discord.`);
+            doc.moveDown();
+
+            // Messages détaillés
+            messages.forEach((msg, index) => {
+                doc
+                    .fontSize(10)
+                    .text(`Message ${index + 1}:`, { underline: true })
+                    .text(`- ID : ${msg.id}`)
+                    .text(`- Contenu : ${msg.content}`)
+                    .text(`- Date et Heure : ${msg.timestamp}`)
+                    .moveDown();
+            });
+
+            // Fin du document
+            doc.end();
+
+            writeStream.on('finish', () => {
+                console.log(`Rapport PDF généré : ${pdfPath}`);
+                resolve();
+            });
+
+            writeStream.on('error', (err) => reject(err));
+        } catch (err) {
+            reject(err);
+        }
+    });
+}
+
 // Fonction pour analyser les messages Discord
 async function analyzeMessages() {
     const outputFilePath = path.join(__dirname, 'reports', 'problematic_messages_report.json');
@@ -67,7 +112,10 @@ async function analyzeMessages() {
                 // Sauvegarde les messages problématiques dans un fichier JSON
                 if (problematicMessages.length > 0) {
                     await fs.promises.writeFile(outputFilePath, JSON.stringify(problematicMessages, null, 2), 'utf8');
-                    console.log(`Rapport généré avec ${problematicMessages.length} messages problématiques.`);
+                    console.log(`Rapport JSON généré avec ${problematicMessages.length} messages problématiques.`);
+
+                    // Génération du rapport PDF
+                    await createPDFReport(problematicMessages, outputFilePath);
                 } else {
                     console.log('Aucun message problématique détecté.');
                 }
