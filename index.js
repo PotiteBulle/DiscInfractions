@@ -30,10 +30,17 @@ async function loadProblematicPatterns() {
             }
         }
 
-        console.log(`Motifs problématiques chargés : ${problematicPatterns.length}`);
+        console.log(`Motifs problématiques chargés (incluant les émoticônes) : ${problematicPatterns.length}`);
     } catch (err) {
         console.error('Erreur lors du chargement des motifs problématiques :', err);
     }
+}
+
+// Fonction pour convertir les émoticônes en représentation hexadécimale
+function convertEmojisToHex(content) {
+    return content.replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F700}-\u{1F77F}\u{1F780}-\u{1F7FF}\u{1F800}-\u{1F8FF}\u{1F900}-\u{1F9FF}\u{1FA00}-\u{1FA6F}\u{1FA70}-\u{1FAFF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{2300}-\u{23FF}\u{2B50}\u{2764}\u{1F004}-\u{1F0CF}]/gu, (match) => {
+        return '\\x' + match.codePointAt(0).toString(16).toUpperCase();
+    });
 }
 
 // Fonction pour créer un rapport PDF des messages problématiques
@@ -51,16 +58,17 @@ function createPDFReport(messages, outputFilePath) {
             doc.moveDown();
 
             // Résumé
-            doc.fontSize(12).text(`Ce rapport contient ${messages.length} message(s) problématique(s) détecté(s) sur Discord.`);
+            doc.fontSize(12).text(`Ce rapport contient ${messages.length} message(s) problématique(s) détecté(s) sur Discord`);
             doc.moveDown();
 
             // Messages détaillés
             messages.forEach((msg, index) => {
+                const messageWithHexEmotes = convertEmojisToHex(msg.content);
                 doc
                     .fontSize(10)
                     .text(`Message ${index + 1}:`, { underline: true })
                     .text(`- ID : ${msg.id}`)
-                    .text(`- Contenu : ${msg.content}`)
+                    .text(`- Contenu : ${messageWithHexEmotes}`)
                     .text(`- Date et Heure : ${msg.timestamp}`)
                     .moveDown();
             });
