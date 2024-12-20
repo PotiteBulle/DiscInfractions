@@ -58,7 +58,7 @@ function createPDFReport(messages, outputFilePath) {
             doc.moveDown();
 
             // Résumé
-            doc.fontSize(12).text(`Ce rapport contient ${messages.length} message(s) problématique(s) détecté(s) sur Discord`);
+            doc.fontSize(12).text(`Ce rapport contient ${messages.length} messages problématiques détectés d'un salon Discord`);
             doc.moveDown();
 
             // Messages détaillés
