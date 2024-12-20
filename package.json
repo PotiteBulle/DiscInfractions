@@ -1,0 +1,23 @@
+{
+  "name": "discinfractions",
+  "version": "1.0.0",
+  "description": "Système automatisé conçu pour surveiller et détecter les infractions dans les messages Discord. Il identifie les messages problématiques et génère un rapport des violations pour faciliter la modération.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PotiteBulle/DiscInfractions.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PotiteBulle/DiscInfractions/issues"
+  },
+  "homepage": "https://github.com/PotiteBulle/DiscInfractions#readme",
+  "dependencies": {
+    "JSONStream": "^1.3.5"
+  }
+}
