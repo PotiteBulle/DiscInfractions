@@ -2,7 +2,7 @@
 node_modules/
 
 # Dossiers de rapports générés
-
+reports/
 
 # Fichiers de log
 *.log
