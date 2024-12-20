@@ -1,0 +1,25 @@
+# Node.js
+node_modules/
+
+# Dossiers de rapports générés
+reports/
+
+# Fichiers de log
+*.log
+
+# Fichiers de configuration locaux
+.env
+
+# Fichiers temporaires de l'éditeur
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Fichiers générés par des outils de build (si applicable)
+dist/
+build/
+
+# Sauvegarde des fichiers
+*.bak
+*.tmp
